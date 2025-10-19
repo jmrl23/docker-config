@@ -1,4 +1,6 @@
-localstack/
+localstack/*
+!localstack/init
+!localstack/init/**
 mqtt/*
 !mqtt/config/
 !mqtt/config/** 
