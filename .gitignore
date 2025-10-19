@@ -1,0 +1,6 @@
+localstack/
+mqtt/*
+!mqtt/config/
+!mqtt/config/** 
+postgres/
+redis/data

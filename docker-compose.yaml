@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    restart: unless-stopped
+    networks:
+      shared:
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres/pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.4.2-alpine
+    container_name: redis
+    restart: unless-stopped
+    networks:
+      shared:
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  mqtt5:
+    image: eclipse-mosquitto
+    container_name: mqtt5
+    restart: unless-stopped
+    networks:
+      shared:
+    ports:
+      - 1883:1883
+      - 9001:9001 # ws
+    volumes:
+      - ./mqtt/config:/mosquitto/config
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    restart: unless-stopped
+    networks:
+      shared:
+    ports:
+      - 4566:4566
+    environment:
+      SERVICES: s3
+      PERSISTENCE: 1
+      DNS_ADDRESS: 8.8.8.8
+      GATEWAY_LISTEN: 0.0.0.0:4566
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: us-east-1
+      S3_ENDPOINT_URL: http://localstack:4566
+    volumes:
+      - ./localstack:/var/lib/localstack
+      - ./localstack/init:/etc/localstack/init/ready.d
+
+networks:
+  shared:
+    name: docker shared network
+    driver: bridge
+    enable_ipv4: true
+    enable_ipv6: false
