@@ -6,3 +6,4 @@ mqtt/*
 !mqtt/config/** 
 postgres/
 redis/data
+qdrant/storage
