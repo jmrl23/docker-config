@@ -10,7 +10,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./postgres/pgdata:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql
 
   redis:
     image: redis:7.4.2-alpine
@@ -23,36 +23,6 @@ services:
     volumes:
       - ./redis/data:/data
     command: ["redis-server", "--appendonly", "yes"]
-
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: qdrant
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - "6333:6333" # REST API
-      - "6334:6334" # gRPC
-    environment:
-      QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
-      QDRANT__SERVICE__GRPC_PORT: 6334
-      QDRANT__SERVICE__API_PORT: 6333
-    volumes:
-      - ./qdrant/storage:/qdrant/storage
-
-  mqtt5:
-    image: eclipse-mosquitto
-    container_name: mqtt5
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - 1883:1883
-      - 9001:9001 # ws
-    volumes:
-      - ./mqtt/config:/mosquitto/config
-      - ./mqtt/data:/mosquitto/data
-      - ./mqtt/log:/mosquitto/log
 
   localstack:
     image: localstack/localstack
@@ -75,9 +45,24 @@ services:
       - ./localstack:/var/lib/localstack
       - ./localstack/init:/etc/localstack/init/ready.d
 
+#  qdrant:
+#    image: qdrant/qdrant:latest
+#    container_name: qdrant
+#    restart: unless-stopped
+#    networks:
+#      shared:
+#    ports:
+#      - "6333:6333" # REST API
+#      - "6334:6334" # gRPC
+#    environment:
+#      QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
+#      QDRANT__SERVICE__GRPC_PORT: 6334
+#      QDRANT__SERVICE__API_PORT: 6333
+#    volumes:
+#      - ./qdrant/storage:/qdrant/storage
+
 networks:
   shared:
-    name: docker shared network
     driver: bridge
     enable_ipv4: true
     enable_ipv6: false
