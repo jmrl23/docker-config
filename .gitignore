@@ -1,9 +1,16 @@
+# postgres
+postgres/
+
+# redis
+redis/data/
+
+# localstack
 localstack/*
 !localstack/init
 !localstack/init/**
-mqtt/*
-!mqtt/config/
-!mqtt/config/** 
-postgres/
-redis/data
-qdrant/storage
+
+# qdrant
+qdrant/storage/
+
+# coturn
+coturn/

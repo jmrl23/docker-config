@@ -1,81 +1,85 @@
-services:
-  postgres:
-    image: postgres
-    container_name: postgres
-    environment:
-      POSTGRES_PASSWORD: password
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - 5432:5432
-    volumes:
-      - ./postgres:/var/lib/postgresql
+# services:
+#   postgres:
+#     image: postgres:alpine
+#     container_name: postgres
+#     restart: unless-stopped
+#     ports:
+#       - 5432:5432
+#     environment:
+#       TZ: "Asia/Manila"
+#       POSTGRES_USER: "postgres_user"
+#       POSTGRES_PASSWORD: "postgres_password"
+#     volumes:
+#       - ./postgres:/var/lib/postgresql
 
-  redis:
-    image: redis:7.4.2-alpine
-    container_name: redis
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - 6379:6379
-    volumes:
-      - ./redis/data:/data
-    command: ["redis-server", "--appendonly", "yes"]
+#   redis:
+#     image: redis:alpine
+#     container_name: redis
+#     restart: unless-stopped
+#     ports:
+#       - 6379:6379
+#     volumes:
+#       - ./redis/data:/data
+#     command:
+#       ["redis-server", "--appendonly", "yes", "--requirepass", "redis_password"]
 
-  localstack:
-    image: localstack/localstack
-    container_name: localstack
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - 4566:4566
-    environment:
-      SERVICES: s3
-      PERSISTENCE: 1
-      DNS_ADDRESS: 8.8.8.8
-      GATEWAY_LISTEN: 0.0.0.0:4566
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_REGION: us-east-1
-      S3_ENDPOINT_URL: http://localstack:4566
-    volumes:
-      - ./localstack:/var/lib/localstack
-      - ./localstack/init:/etc/localstack/init/ready.d
+#   localstack:
+#     image: localstack/localstack
+#     container_name: localstack
+#     restart: unless-stopped
+#     ports:
+#       - 4566:4566
+#     environment:
+#       SERVICES: s3
+#       PERSISTENCE: 1
+#       DNS_ADDRESS: 8.8.8.8
+#       GATEWAY_LISTEN: 0.0.0.0:4566
+#       AWS_ACCESS_KEY_ID: test
+#       AWS_SECRET_ACCESS_KEY: test
+#       AWS_REGION: us-east-1
+#       S3_ENDPOINT_URL: http://localstack:4566
+#     volumes:
+#       - ./localstack:/var/lib/localstack
+#       - ./localstack/init:/etc/localstack/init/ready.d
 
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: qdrant
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    environment:
-      QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
-      QDRANT__SERVICE__GRPC_PORT: 6334
-      QDRANT__SERVICE__API_PORT: 6333
-    volumes:
-      - ./qdrant/storage:/qdrant/storage
+#   qdrant:
+#     image: qdrant/qdrant:latest
+#     container_name: qdrant
+#     restart: unless-stopped
+#     ports:
+#       - "6333:6333"
+#       - "6334:6334"
+#     environment:
+#       QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
+#       QDRANT__SERVICE__GRPC_PORT: 6334
+#       QDRANT__SERVICE__API_PORT: 6333
+#     volumes:
+#       - ./qdrant/storage:/qdrant/storage
 
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: rabbitmq
-    restart: unless-stopped
-    networks:
-      shared:
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+#   rabbitmq:
+#     image: rabbitmq:management-alpine
+#     container_name: rabbitmq
+#     restart: unless-stopped
+#     ports:
+#       - 5672:5672
+#       - 15672:15672
+#     environment:
+#       RABBITMQ_DEFAULT_USER: "rabbitmq_user"
+#       RABBITMQ_DEFAULT_PASS: "rabbitmq_password"
 
-networks:
-  shared:
-    driver: bridge
-    enable_ipv4: true
-    enable_ipv6: false
+#   coturn:
+#     image: coturn/coturn:edge-alpine
+#     container_name: coturn
+#     restart: unless-stopped
+#     network_mode: host # use host network
+#     ports:
+#       - 3478:3478
+#       - 3478:3478/udp
+#       - 5349:5349
+#       - 5349:5349/udp
+#       - 49152-65535:49152-65535/udp
+#     environment:
+#       DETECT_EXTERNAL_IP: "yes"
+#       DETECT_RELAY_IP: "yes"
+#     volumes:
+#       - ./coturn:/var/lib/coturn
