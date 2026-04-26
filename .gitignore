@@ -4,10 +4,8 @@ postgres/
 # redis
 redis/data/
 
-# localstack
-localstack/*
-!localstack/init
-!localstack/init/**
+# localstack-persist
+localstack-persist/
 
 # qdrant
 qdrant/storage/
