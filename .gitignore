@@ -6,3 +6,7 @@ redis/data/
 
 # localstack-persist
 localstack-persist/
+
+# nginx
+nginx/*
+!nginx/nginx.conf
