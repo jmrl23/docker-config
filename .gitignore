@@ -6,9 +6,3 @@ redis/data/
 
 # localstack-persist
 localstack-persist/
-
-# qdrant
-qdrant/storage/
-
-# coturn
-coturn/

@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:alpine
+    image: postgres:18-alpine
     container_name: postgres
     restart: unless-stopped
     ports:
@@ -11,9 +11,14 @@ services:
       POSTGRES_PASSWORD: "postgres_password"
     volumes:
       - ./postgres:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres_user" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: redis:alpine
+    image: redis:8-alpine
     container_name: redis
     restart: unless-stopped
     ports:
@@ -21,10 +26,16 @@ services:
     volumes:
       - ./redis/data:/data
     command: [ "redis-server", "--appendonly", "yes", "--requirepass", "redis_password" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--no-auth-warning", "-a", "redis_password", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   localstack-persist:
-    image: gresau/localstack-persist:4 # pin to major version
+    image: gresau/localstack-persist:4
     container_name: localstack
+    restart: unless-stopped
     ports:
       - "4566:4566"
     environment:
@@ -40,46 +51,3 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  # qdrant:
-  #   image: qdrant/qdrant:latest
-  #   container_name: qdrant
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6333:6333"
-  #     - "6334:6334"
-  #   environment:
-  #     QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
-  #     QDRANT__SERVICE__GRPC_PORT: 6334
-  #     QDRANT__SERVICE__API_PORT: 6333
-  #   volumes:
-  #     - ./qdrant/storage:/qdrant/storage
-
-  # rabbitmq:
-  #   image: rabbitmq:management-alpine
-  #   container_name: rabbitmq
-  #   restart: unless-stopped
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: "rabbitmq_user"
-  #     RABBITMQ_DEFAULT_PASS: "rabbitmq_password"
-
-  # coturn:
-  #   image: coturn/coturn:edge-alpine
-  #   container_name: coturn
-  #   restart: unless-stopped
-  #   network_mode: host # use host network
-  #   ports:
-  #     - 3478:3478
-  #     - 3478:3478/udp
-  #     - 5349:5349
-  #     - 5349:5349/udp
-  #     - 49152-65535:49152-65535/udp
-  #   environment:
-  #     DETECT_EXTERNAL_IP: "yes"
-  #     DETECT_RELAY_IP: "yes"
-  #     STATIC_AUTH_SECRET: "coturn_auth_secret"
-  #     LT_CRED_MECH: "yes"
-  #   volumes:
-  #     - ./coturn:/var/lib/coturn
