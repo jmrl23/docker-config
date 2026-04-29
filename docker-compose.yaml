@@ -4,7 +4,7 @@ services:
     container_name: postgres
     restart: unless-stopped
     ports:
-      - 5432:5432
+      - "0.0.0.0:5432:5432"
     environment:
       TZ: "Asia/Manila"
       POSTGRES_USER: "postgres_user"
@@ -22,10 +22,19 @@ services:
     container_name: redis
     restart: unless-stopped
     ports:
-      - 6379:6379
+      - "0.0.0.0:6379:6379"
     volumes:
       - ./redis/data:/data
-    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "redis_password" ]
+    command:
+      [
+        "redis-server",
+        "--bind",
+        "0.0.0.0",
+        "--appendonly",
+        "yes",
+        "--requirepass",
+        "redis_password",
+      ]
     healthcheck:
       test: [ "CMD", "redis-cli", "--no-auth-warning", "-a", "redis_password", "ping" ]
       interval: 10s
@@ -37,7 +46,7 @@ services:
     container_name: localstack
     restart: unless-stopped
     ports:
-      - "4566:4566"
+      - "0.0.0.0:4566:4566"
     environment:
       SERVICES: s3
       PERSIST_DEFAULT: 0
@@ -51,3 +60,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+networks:
+  default:
+    driver: bridge
+    enable_ipv6: false
